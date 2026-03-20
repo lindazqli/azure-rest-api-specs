@@ -10056,13 +10056,13 @@
         }
       }
     },
-    "/toolsets/{tool_set_name}": {
+    "/toolsets/{toolset_name}": {
       "post": {
         "operationId": "updateToolset",
-        "description": "Update a toolset.",
+        "description": "Update a toolset. Creates a new version of the toolset with an incremented version number.",
         "parameters": [
           {
-            "name": "tool_set_name",
+            "name": "toolset_name",
             "in": "path",
             "required": true,
             "description": "The name of the toolset to update.",
@@ -10163,13 +10163,24 @@
         "description": "Retrieve a toolset.",
         "parameters": [
           {
-            "name": "tool_set_name",
+            "name": "toolset_name",
             "in": "path",
             "required": true,
             "description": "The name of the toolset to retrieve.",
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "description": "The specific version to retrieve. If not specified, returns the latest version.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "explode": false
           },
           {
             "name": "Foundry-Features",
@@ -10230,13 +10241,24 @@
         "description": "Delete a toolset.",
         "parameters": [
           {
-            "name": "tool_set_name",
+            "name": "toolset_name",
             "in": "path",
             "required": true,
             "description": "The name of the toolset to delete.",
             "schema": {
               "type": "string"
             }
+          },
+          {
+            "name": "version",
+            "in": "query",
+            "required": false,
+            "description": "The specific version to delete. If not specified, deletes all versions.",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "explode": false
           },
           {
             "name": "Foundry-Features",
@@ -10268,6 +10290,143 @@
               "application/json": {
                 "schema": {
                   "$ref": "#/components/schemas/DeleteToolsetResponse"
+                }
+              }
+            }
+          },
+          "default": {
+            "description": "An unexpected error response.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApiErrorResponse"
+                }
+              }
+            }
+          }
+        },
+        "tags": [
+          "Toolsets"
+        ],
+        "x-ms-foundry-meta": {
+          "conditional_previews": [
+            "Toolsets=V1Preview"
+          ]
+        }
+      }
+    },
+    "/toolsets/{toolset_name}/versions": {
+      "get": {
+        "operationId": "listToolsetVersions",
+        "description": "List all versions of a toolset.",
+        "parameters": [
+          {
+            "name": "toolset_name",
+            "in": "path",
+            "required": true,
+            "description": "The name of the toolset to list versions for.",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "limit",
+            "in": "query",
+            "required": false,
+            "description": "A limit on the number of objects to be returned. Limit can range between 1 and 100, and the\ndefault is 20.",
+            "schema": {
+              "type": "integer",
+              "format": "int32",
+              "default": 20
+            },
+            "explode": false
+          },
+          {
+            "name": "order",
+            "in": "query",
+            "required": false,
+            "description": "Sort order by the `created_at` timestamp of the objects. `asc` for ascending order and`desc`\nfor descending order.",
+            "schema": {
+              "$ref": "#/components/schemas/PageOrder"
+            },
+            "explode": false
+          },
+          {
+            "name": "after",
+            "in": "query",
+            "required": false,
+            "description": "A cursor for use in pagination. `after` is an object ID that defines your place in the list.\nFor instance, if you make a list request and receive 100 objects, ending with obj_foo, your\nsubsequent call can include after=obj_foo in order to fetch the next page of the list.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          },
+          {
+            "name": "before",
+            "in": "query",
+            "required": false,
+            "description": "A cursor for use in pagination. `before` is an object ID that defines your place in the list.\nFor instance, if you make a list request and receive 100 objects, ending with obj_foo, your\nsubsequent call can include before=obj_foo in order to fetch the previous page of the list.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          },
+          {
+            "name": "Foundry-Features",
+            "in": "header",
+            "required": true,
+            "description": "A feature flag opt-in required when using preview operations or modifying persisted preview resources.",
+            "schema": {
+              "type": "string",
+              "enum": [
+                "Toolsets=V1Preview"
+              ]
+            }
+          },
+          {
+            "name": "api-version",
+            "in": "query",
+            "required": true,
+            "description": "The API version to use for this operation.",
+            "schema": {
+              "type": "string"
+            },
+            "explode": false
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "The request has succeeded.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "required": [
+                    "data",
+                    "has_more"
+                  ],
+                  "properties": {
+                    "data": {
+                      "type": "array",
+                      "items": {
+                        "$ref": "#/components/schemas/ToolsetObject"
+                      },
+                      "description": "The requested list of items."
+                    },
+                    "first_id": {
+                      "type": "string",
+                      "description": "The first ID represented in this list."
+                    },
+                    "last_id": {
+                      "type": "string",
+                      "description": "The last ID represented in this list."
+                    },
+                    "has_more": {
+                      "type": "boolean",
+                      "description": "A value indicating whether there are additional values available not captured in this list."
+                    }
+                  },
+                  "description": "The response data for a requested list of items."
                 }
               }
             }
@@ -40264,6 +40423,7 @@
         "required": [
           "object",
           "id",
+          "version",
           "created_at",
           "updated_at",
           "name",
@@ -40281,6 +40441,12 @@
             "type": "string",
             "description": "The unique identifier of the toolset."
           },
+          "version": {
+            "type": "integer",
+            "format": "int32",
+            "minimum": 1,
+            "description": "The version number of this toolset. Increments with each update."
+          },
           "created_at": {
             "type": "integer",
             "format": "unixtime",
@@ -40289,7 +40455,7 @@
           "updated_at": {
             "type": "integer",
             "format": "unixtime",
-            "description": "The Unix timestamp (seconds) when the toolset was last updated."
+            "description": "The Unix timestamp (seconds) when this version was created."
           },
           "name": {
             "type": "string",

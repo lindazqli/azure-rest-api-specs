@@ -22,10 +22,10 @@ interface Toolsets {
   >;
 
   #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "not yet an Azure operation"
-  @doc("Update a toolset.")
+  @doc("Update a toolset. Creates a new version of the toolset with an incremented version number.")
   @operationId("updateToolset")
   @post
-  @route("/toolsets/{tool_set_name}")
+  @route("/toolsets/{toolset_name}")
   @extension("x-ms-foundry-meta", ToolsetsRequiredPreviews)
   updateToolset is FoundryDataPlaneOperation<
     UpdateToolsetRequest & ToolsetsPreviewHeader,
@@ -36,7 +36,7 @@ interface Toolsets {
   @doc("Retrieve a toolset.")
   @operationId("getToolset")
   @get
-  @route("/toolsets/{tool_set_name}")
+  @route("/toolsets/{toolset_name}")
   @extension("x-ms-foundry-meta", ToolsetsRequiredPreviews)
   getToolset is FoundryDataPlaneOperation<
     GetToolsetRequest & ToolsetsPreviewHeader,
@@ -56,10 +56,22 @@ interface Toolsets {
   >;
 
   #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "not yet an Azure operation"
+  @doc("List all versions of a toolset.")
+  @operationId("listToolsetVersions")
+  @get
+  @list
+  @route("/toolsets/{toolset_name}/versions")
+  @extension("x-ms-foundry-meta", ToolsetsRequiredPreviews)
+  listToolsetVersions is FoundryDataPlaneOperation<
+    ListToolsetVersionsRequest & ToolsetsPreviewHeader,
+    AgentsPagedResult<ToolsetObject>
+  >;
+
+  #suppress "@azure-tools/typespec-azure-core/use-standard-operations" "not yet an Azure operation"
   @doc("Delete a toolset.")
   @operationId("deleteToolset")
   @delete
-  @route("/toolsets/{tool_set_name}")
+  @route("/toolsets/{toolset_name}")
   @extension("x-ms-foundry-meta", ToolsetsRequiredPreviews)
   deleteToolset is FoundryDataPlaneOperation<
     DeleteToolsetRequest & ToolsetsPreviewHeader,

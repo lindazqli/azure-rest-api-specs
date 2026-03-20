@@ -23,11 +23,15 @@ model ToolsetObject {
   @doc("The unique identifier of the toolset.")
   id: string;
 
+  @doc("The version number of this toolset. Increments with each update.")
+  @minValue(1)
+  version: int32;
+
   @doc("The Unix timestamp (seconds) when the toolset was created.")
   @encode("unixTimestamp", int32)
   created_at: utcDateTime;
 
-  @doc("The Unix timestamp (seconds) when the toolset was last updated.")
+  @doc("The Unix timestamp (seconds) when this version was created.")
   @encode("unixTimestamp", int32)
   updated_at: utcDateTime;
 
@@ -77,7 +81,7 @@ alias CreateToolsetRequest = {
 alias UpdateToolsetRequest = {
   @doc("The name of the toolset to update.")
   @path
-  tool_set_name: string;
+  toolset_name: string;
 
   @doc("A human-readable description of the toolset.")
   @maxLength(512)
@@ -93,15 +97,31 @@ alias UpdateToolsetRequest = {
 alias GetToolsetRequest = {
   @doc("The name of the toolset to retrieve.")
   @path
-  tool_set_name: string;
+  toolset_name: string;
+
+  @doc("The specific version to retrieve. If not specified, returns the latest version.")
+  @query
+  version?: int32;
 };
 
 alias ListToolsetsRequest = {
   ...CommonPageQueryParameters;
 };
 
+alias ListToolsetVersionsRequest = {
+  @doc("The name of the toolset to list versions for.")
+  @path
+  toolset_name: string;
+
+  ...CommonPageQueryParameters;
+};
+
 alias DeleteToolsetRequest = {
   @doc("The name of the toolset to delete.")
   @path
-  tool_set_name: string;
+  toolset_name: string;
+
+  @doc("The specific version to delete. If not specified, deletes all versions.")
+  @query
+  version?: int32;
 };
